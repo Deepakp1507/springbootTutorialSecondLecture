@@ -1,6 +1,7 @@
 package com.example.springbootTutorial.DTO;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,7 +45,7 @@ public class EmployeeDTO {
     private LocalDate dateOfJoining;
 
    // @AssertTrue(message = "Employee should be active")
-   // @JsonProperty("isActive")
+    @JsonProperty("isActive")
     private Boolean isActive;
 
     private  Long id;
