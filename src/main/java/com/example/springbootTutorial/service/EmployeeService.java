@@ -2,6 +2,7 @@ package com.example.springbootTutorial.service;
 
 import com.example.springbootTutorial.DTO.EmployeeDTO;
 import com.example.springbootTutorial.entities.EmployeeEntity;
+import com.example.springbootTutorial.exceptions.ResourceNotFoundException;
 import com.example.springbootTutorial.repositories.EmployeeRepository;
 import org.apache.el.util.ReflectionUtil;
 import org.modelmapper.ModelMapper;
@@ -50,6 +51,8 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(Long employeeId, EmployeeDTO inputDTO) {
+        boolean exist = isExistByID(employeeId);
+        if(!exist) throw  new ResourceNotFoundException("Employee waS NOT FOUND with ID :" +employeeId);
        EmployeeEntity input=  modelMapper.map(inputDTO, EmployeeEntity.class);
        input.setId(employeeId);
         EmployeeEntity savedEmployeeEntity =  employeeRepository.save(input);
@@ -61,8 +64,7 @@ public class EmployeeService {
 
             boolean exist = isExistByID(employeeId);
             if(!exist){
-                System.out.println("Not Found");
-                return false;
+                throw  new ResourceNotFoundException("Employee waS NOT FOUND while deleting with ID :" +employeeId);
             }
 
             employeeRepository.deleteById(employeeId);
@@ -76,7 +78,7 @@ public  boolean isExistByID(Long employeeID){
 }
     public EmployeeDTO updatePartialEmployeeById(Map<String, Object> updates, Long employeeId) {
         boolean exist = isExistByID(employeeId);
-        if(!exist) return null;
+        if(!exist) throw  new ResourceNotFoundException("Employee waS NOT FOUND while updating partial  with ID :" +employeeId);
 
         EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElse(null);
         updates.forEach((field,value)->{

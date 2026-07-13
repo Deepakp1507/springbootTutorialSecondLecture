@@ -2,16 +2,14 @@ package com.example.springbootTutorial.controller;
 
 import com.example.springbootTutorial.DTO.EmployeeDTO;
 import com.example.springbootTutorial.entities.EmployeeEntity;
+import com.example.springbootTutorial.exceptions.ResourceNotFoundException;
 import com.example.springbootTutorial.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping (path = "/employees")
@@ -26,9 +24,11 @@ public class EmplpyeeController {
     @GetMapping(path = "/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long id){
         Optional<EmployeeDTO> employeeDTO= employeeService.getEmployeeById(id);
-        ResponseEntity<EmployeeDTO> employeeDTOResponseEntity = employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
-        return employeeDTOResponseEntity;
+        return  employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
+                .orElseThrow(()-> new ResourceNotFoundException("Employee waS NOT FOUND with ID :" +id));
+
     }
+
     @GetMapping
     public ResponseEntity<List<EmployeeDTO> >getAllEmployees(@RequestParam(required = false, name = "inputAge") Integer age,
                                              @RequestParam(required = false) String sortBy) {
@@ -42,7 +42,7 @@ public class EmplpyeeController {
     }
 
     @PutMapping(path ="/{employeeId}")
-    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO inputDTO, @PathVariable Long employeeId){
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody @Valid EmployeeDTO inputDTO, @PathVariable Long employeeId){
         return ResponseEntity.ok(employeeService.updateEmployeeById(employeeId, inputDTO));
     }
 
