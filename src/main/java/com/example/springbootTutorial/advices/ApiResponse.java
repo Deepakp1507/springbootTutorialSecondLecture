@@ -1,5 +1,7 @@
 package com.example.springbootTutorial.advices;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ public class ApiResponse<T> {
     private  T data;
     private ApiError error;
 
+    @JsonFormat(pattern = "hh:mm:ss dd-MM-yyyy")
     private LocalDateTime timeStamp;
 
     public ApiResponse(){
